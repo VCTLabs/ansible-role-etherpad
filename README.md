@@ -11,6 +11,7 @@ Role Variables
 * etherpad_appdir
 * admin_user
 * admin_password
+* nodejs_path
 * office_writer_path
 * sql_database_type
 * sql_database_name

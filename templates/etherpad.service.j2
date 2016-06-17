@@ -9,7 +9,7 @@ Type=simple
 User=etherpad
 Group=etherpad
 WorkingDirectory={{ etherpad_appdir }}
-ExecStart=/usr/bin/nodejs {{ etherpad_appdir }}/node_modules/ep_etherpad-lite/node/server.js
+ExecStart={{ nodejs_path }} {{ etherpad_appdir }}/node_modules/ep_etherpad-lite/node/server.js
 Restart=always
 
 [Install]

@@ -8,6 +8,9 @@ etherpad_appdir: "{{ etherpad_topdir }}/etherpad-{{ etherpad_version }}"
 admin_user: "admin"
 admin_password: "admin"
 
+# nodejs executable (sometimes node, sometimes nodejs, could be specific version in /usr/local...)
+nodejs_path: "/usr/bin/node"
+
 # libreoffice or openoffice writer executable (for file conversions)
 office_writer_path: "/usr/bin/oowriter"
 
