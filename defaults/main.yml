@@ -1,0 +1,28 @@
+---
+# defaults file for ansible-role-etherpad/
+
+etherpad_version: "1.6.0"
+etherpad_topdir: "/home/etherpad"
+etherpad_appdir: "{{ etherpad_topdir }}/etherpad-{{ etherpad_version }}"
+
+admin_user: "admin"
+admin_password: "admin"
+
+# libreoffice or openoffice writer executable (for file conversions)
+office_writer_path: "/usr/bin/oowriter"
+
+# supported sql database types: postgresql, mysql (actually mariadb, on some distros)
+sql_database_type: "mysql"
+sql_database_name: "etherpad"
+sql_database_host: "localhost"
+sql_username: "etherpad"
+sql_password: "etherpad"
+
+web_server_ip: "127.0.0.1"
+web_server_port: 3000
+
+# supported firewall types: firewalld, ufw, iptables
+firewall_type: ""
+
+# supported init types: systemd, sysvinit, openrc
+init_type: ""

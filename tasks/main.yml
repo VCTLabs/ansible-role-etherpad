@@ -1,0 +1,83 @@
+---
+ # libreoffice headless mode does format conversions for file export
+ - name: Install common dependencies (yum)
+   yum: state=installed name={{ item }}
+   with_items:
+    - curl
+    - nodejs
+    - npm
+    - libreoffice-writer
+    - libreoffice-headless
+   when: ansible_os_family == "RedHat" 
+ - name: Install common dependencies (apt)
+   apt: state=installed name={{ item }}
+   with_items:
+    - curl
+    - nodejs
+    - npm
+    - libreoffice-writer
+   when: ansible_os_family == "Debian"
+
+ - name: Install common dependencies (portage)
+   portage: state=installed name={{ item }}
+   with_items:
+    - net-misc/curl
+    - net-libs/nodejs
+    - app-office/libreoffice-bin
+   when: ansible_os_family == "Gentoo"
+
+ - include: db/{{ sql_database_type }}.yml
+
+ - name: Create topdir parent directory
+   file: path={{ etherpad_topdir | dirname }} state=directory recurse=yes
+
+ - name: Create the Etherpad user
+   user: name=etherpad system=yes home={{ etherpad_topdir }}
+
+ - name: Check if Etherpad app directory already exists
+   stat: path={{ etherpad_appdir }}
+   register: etherpad_install_dest
+
+ - name: Download Etherpad 
+   get_url:
+     url=https://github.com/ether/etherpad-lite/archive/{{ etherpad_version }}.tar.gz
+     dest={{ etherpad_topdir }}
+   become: yes
+   become_user: etherpad
+   when: etherpad_install_dest.stat.exists == False
+
+ - name: Unpack Etherpad source tarball
+   unarchive:
+     src={{ etherpad_topdir }}/etherpad-lite-{{ etherpad_version }}.tar.gz
+     dest={{ etherpad_topdir }}
+     copy=no
+   become: yes
+   become_user: etherpad
+   when: etherpad_install_dest.stat.exists == False
+
+ - name: Create appdir parent directory
+   file: path={{ etherpad_appdir | dirname }} state=directory recurse=yes
+   when: etherpad_install_dest.stat.exists == False
+
+ - name: Install unpacked Etherpad to separate app directory
+   command: mv {{ etherpad_topdir }}/etherpad-lite-{{ etherpad_version }} {{ etherpad_appdir }}
+   when: etherpad_install_dest.stat.exists == False
+
+ - name: Configure Etherpad
+   template: src=settings.json.j2 dest={{ etherpad_appdir }}/settings.json
+   become: yes
+   become_user: etherpad
+
+ - name: Run Etherpad installer
+   command: bin/installDeps.sh
+   become_user: etherpad
+   args:
+     chdir: "{{ etherpad_appdir }}"
+
+ - name: Create log directory
+   file: path=/var/log/etherpad state=directory recurse=yes owner=etherpad group=etherpad
+
+ - include: firewall.yml
+
+ - include: init.yml
+

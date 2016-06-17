@@ -1,0 +1,16 @@
+# {{ansible_managed}}
+
+[Unit]
+Description=Etherpad-lite, the collaborative editor.
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=etherpad
+Group=etherpad
+WorkingDirectory={{ etherpad_appdir }}
+ExecStart=/usr/bin/nodejs {{ etherpad_appdir }}/node_modules/ep_etherpad-lite/node/server.js
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

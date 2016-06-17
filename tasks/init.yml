@@ -1,0 +1,16 @@
+---
+ - name: Create startup file (systemd)
+   template: src=etherpad.service.j2 dest=/lib/systemd/system/etherpad.service
+   when: init_type == "systemd"
+
+ - name: Create startup file (sysvinit)
+   template: src=etherpad.init.j2 dest=/etc/init.d/etherpad mode=0755
+   when: init_type == "sysvinit"
+
+ - name: Create startup file (openrc)
+   template: src=etherpad.openrc.j2 dest=/etc/init.d/etherpad mode=0755
+   when: init_type == "openrc"
+
+ - name: Enable Etherpad service
+   service: name=etherpad state=started enabled=yes
+   when: init_type != ""

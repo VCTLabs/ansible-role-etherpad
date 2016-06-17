@@ -1,0 +1,5 @@
+---
+# handlers file for ansible-role-etherpad/
+- name: Firewalld reload
+  service: name=firewalld state=reloaded
+

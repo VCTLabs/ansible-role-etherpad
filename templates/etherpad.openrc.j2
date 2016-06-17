@@ -1,0 +1,27 @@
+#!/sbin/runscript
+# {{ansible_managed}}
+
+LOGFILE="/var/log/etherpad/etherpad-run.log"
+EPLITE_DIR="{{ etherpad_appdir }}"
+EPLITE_BIN="bin/safeRun.sh"
+USER="etherpad"
+GROUP="etherpad"
+
+# use default start() with following settings
+command=$EPLITE_BIN
+pidfile=/run/etherpad.pid
+start_stop_daemon_args="--background --make-pidfile --pidfile ${pidfile}
+        --chdir ${EPLITE_DIR} --user ${USER} --group ${GROUP}"
+command_args="$LOGFILE"
+
+depend() {
+	use net
+}
+
+stop() {
+	ebegin "Stopping ${SVCNAME}"
+	start-stop-daemon --stop \
+		--exec ${command} \
+		--pidfile ${pidfile}
+	eend
+}
